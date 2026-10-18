@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+  </defs>
+  <rect x="48" y="48" width="928" height="928" rx="208" fill="url(#bg)"/>
+  <!-- git 分支：主干 + 一条分出去的分支 -->
+  <g stroke="#ffffff" stroke-width="60" stroke-linecap="round" fill="none">
+    <line x1="340" y1="250" x2="340" y2="770"/>
+    <path d="M640 330 C640 520 340 470 340 640"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="340" cy="250" r="80"/>
+    <circle cx="340" cy="770" r="80"/>
+    <circle cx="640" cy="300" r="80"/>
+  </g>
+  <!-- 已备份的对勾 -->
+  <circle cx="712" cy="712" r="188" fill="#22c55e" stroke="#1e3a8a" stroke-width="36"/>
+  <path d="M618 716 L688 786 L812 652" stroke="#ffffff" stroke-width="60" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

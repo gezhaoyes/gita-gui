@@ -1,57 +1,61 @@
 # gita-gui
 
-把 Windows 和 WSL 两边的 git 仓库放在一张表里：一眼看出哪些还没备份到远程，一键推送；自动维护一份仓库清单，换电脑或重装系统后可以从清单一键 clone 回来。
+English | [简体中文](README.zh-CN.md)
 
-仓库登记直接用 [gita](https://github.com/nosarthur/gita) 的数据，和 gita 命令行互通：在这里添加的仓库 `gita ll` 能看到，用 `gita add` 加的这里刷新后也能看到。
+One table for all your git repositories on **Windows and WSL**: see at a glance which ones are not backed up to a remote, and push them with one click. It also keeps a manifest of your repositories, so after switching computers or reinstalling the system you can clone everything back in one go.
 
-## 功能
+Repository registration uses the data of [gita](https://github.com/nosarthur/gita), so it works together with the gita command line: repositories added here show up in `gita ll`, and repositories added with `gita add` show up here after a refresh.
 
-- **状态总表**：Windows 和 WSL 的仓库合在一张表，按颜色区分
-  - 🟢 已备份：没有未推送的提交，也没有未提交的改动
-  - 🟡 有改动：有改了但没提交的文件（提交请在编辑器里做，本工具不提交）
-  - 🔴 未备份：有未推送的提交、分支没有上游、上游分支已不存在，或者根本没有远程仓库
-  - ⚪ 路径不存在：登记的文件夹被移走或删除了
-- **添加**：选一个文件夹或把它拖进窗口。本身是仓库就直接加入；不是就往下找，列出找到的仓库勾选加入。`\\wsl.localhost\...` 下的文件夹自动归到 WSL
-- **推送**：单个、选中或全部；一个接一个推，失败的逐条显示原因（认证 / 无上游 / 被拒绝 / 网络）并可重试
-- **清单**：自动维护 `manifest-windows.json` 和 `manifest-wsl.json`，建议放在 OneDrive 等同步盘里
-  - 有变化才写入；别的电脑或手工改过清单时不会覆盖，而是让你选"从清单恢复"或"用本机覆盖"
-  - 新电脑上登记为空时，不会把清单清空
-- **从清单恢复**：勾选仓库，clone 到原路径（可改），并恢复 gita 分组和多推送地址
-- **右键菜单**：在资源管理器 / VS Code 中打开（WSL 仓库用 Remote-WSL 打开）、重新定位、移除登记
+> The user interface is in Chinese.
 
-工具不做 fetch，"未推送"是和本机记录的远程状态比较。只检查当前所在的分支。
+## Features
 
-## 需要准备
+- **Status table**: Windows and WSL repositories in one table, color-coded
+  - 🟢 Backed up: no unpushed commits and no uncommitted changes
+  - 🟡 Changed: there are uncommitted changes (commit them in your editor — this tool does not commit)
+  - 🔴 Not backed up: unpushed commits, no upstream branch, upstream branch gone, or no remote at all
+  - ⚪ Path missing: the registered folder was moved or deleted
+- **Add**: pick a folder or drag it into the window. If it is a repository it is added directly; otherwise the tool searches below it and lets you choose which repositories to add. Folders under `\\wsl.localhost\...` are recognized as WSL
+- **Push**: one, selected, or all; pushed one after another, failures shown per repository with the cause (authentication / no upstream / rejected / network) and a retry button
+- **Manifest**: `manifest-windows.json` and `manifest-wsl.json` are maintained automatically; putting them in a synced folder such as OneDrive is recommended
+  - Written only when the content changes. If the manifest was changed on another computer or by hand, it is not overwritten — you choose between "restore from manifest" and "overwrite with this computer"
+  - A new computer with an empty registry will not wipe the manifest
+- **Restore from manifest**: select repositories, clone them to their original paths (editable), and restore gita groups and multiple push URLs
+- **Context menu**: open in Explorer / VS Code (WSL repositories open via Remote-WSL), relocate, unregister
 
-1. **Windows 10/11**，装好 [Git for Windows](https://git-scm.com/download/win)（自带 Git Credential Manager）
-2. **gita**（Windows 侧）：`pipx install gita`
-3. **WSL 侧**（不用 WSL 可以跳过）：
-   - 装 gita：`pipx install gita`，或者 `python3 -m venv ~/.local/share/gita-venv && ~/.local/share/gita-venv/bin/pip install gita && ln -s ~/.local/share/gita-venv/bin/gita ~/.local/bin/gita`
-   - 让 WSL 的 git 借用 Windows 的登录（推送失败时工具里也有"一键配置"）：
+The tool does not fetch: "unpushed" is compared against the remote state recorded locally. Only the currently checked-out branch is checked.
+
+## Requirements
+
+1. **Windows 10/11** with [Git for Windows](https://git-scm.com/download/win) (includes Git Credential Manager)
+2. **gita** on Windows: `pipx install gita`
+3. **WSL** (skip if you do not use WSL):
+   - Install gita: `pipx install gita`, or `python3 -m venv ~/.local/share/gita-venv && ~/.local/share/gita-venv/bin/pip install gita && ln -s ~/.local/share/gita-venv/bin/gita ~/.local/bin/gita`
+   - Let git in WSL use the Windows login (the tool also offers a one-click setup when a push fails):
      ```bash
      git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
      ```
-     路径按你的 Git for Windows 安装位置调整。
+     Adjust the path to where Git for Windows is installed.
 
-## 安装
+## Installation
 
-从 [Releases](../../releases) 下载安装包，或者自己构建（见下文）。
+Download the installer from [Releases](../../releases), or build it yourself (see below).
 
-第一次打开会让你确认清单目录，默认是 `%OneDrive%\gita-gui`。
+On first launch you are asked to confirm the manifest folder; the default is `%OneDrive%\gita-gui`.
 
-## 常见问题
+## FAQ
 
-### WSL 里推送报 `Exec format error`
+### Pushing from WSL fails with `Exec format error`
 
-WSL 开启 systemd（`/etc/wsl.conf` 里 `systemd=true`）后，有时会丢掉运行 Windows 程序的注册项 `WSLInterop`，于是调不起 Windows 的凭据管理器。验证：在 WSL 里执行 `cmd.exe /c ver`，同样报 `Exec format error` 就是这个问题。
+With systemd enabled in WSL (`systemd=true` in `/etc/wsl.conf`), the `WSLInterop` registration that lets WSL run Windows programs is sometimes lost, so the Windows credential manager cannot be started. To check: run `cmd.exe /c ver` in WSL — if it also fails with `Exec format error`, this is the problem.
 
-立即修复（重启 WSL 后会失效）：
+Quick fix (lost when WSL restarts):
 
 ```bash
 sudo sh -c 'echo :WSLInterop:M::MZ::/init:PF > /proc/sys/fs/binfmt_misc/register'
 ```
 
-永久修复：加一个开机时自动补注册的服务。
+Permanent fix: add a service that re-registers it at boot.
 
 ```bash
 sudo tee /etc/systemd/system/wsl-interop.service >/dev/null <<'EOF'
@@ -70,32 +74,32 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now wsl-interop.service
 ```
 
-注意：Ubuntu 在 WSL 里不会运行 `systemd-binfmt`，所以往 `/usr/lib/binfmt.d/` 放配置文件不起作用。
+Note: Ubuntu does not run `systemd-binfmt` inside WSL, so putting a file in `/usr/lib/binfmt.d/` has no effect.
 
-### 数据存在哪里
+### Where is the data stored
 
-| 内容 | 位置 |
+| Content | Location |
 |---|---|
-| 仓库登记（gita） | Windows：`%USERPROFILE%\.config\gita\`；WSL：`~/.config/gita/` |
-| 清单 | 设置里的清单目录 |
-| 工具设置 | `%APPDATA%\com.gezhao.gitagui\config.json` |
+| Repository registry (gita) | Windows: `%USERPROFILE%\.config\gita\`; WSL: `~/.config/gita/` |
+| Manifests | The manifest folder set in Settings |
+| Tool settings | `%APPDATA%\com.gezhao.gitagui\config.json` |
 
-## 开发
+## Development
 
-技术栈：Tauri 2（Rust）+ Vue 3 + TypeScript + Naive UI。需要 Rust（MSVC）、Node.js。
+Stack: Tauri 2 (Rust) + Vue 3 + TypeScript + Naive UI. Requires Rust (MSVC toolchain) and Node.js.
 
 ```bash
 npm install
-npm run tauri dev      # 开发运行
-npm run tauri build    # 打包，产物在 src-tauri/target/release/bundle/
+npm run tauri dev      # run in development
+npm run tauri build    # build installers into src-tauri/target/release/bundle/
 
 cd src-tauri
-cargo test                       # 单元测试
-cargo test -- --include-ignored  # 含真实 WSL 和 gita 的端到端测试（需要 WSL 发行版 Ubuntu 和两边的 gita）
+cargo test                       # unit tests
+cargo test -- --include-ignored  # plus end-to-end tests against real WSL and gita (needs the Ubuntu distro and gita on both sides)
 ```
 
-设计说明见 [docs/计划书.md](docs/计划书.md)。
+The design document is in Chinese: [docs/计划书.md](docs/计划书.md).
 
-## 许可证
+## License
 
 [MIT](LICENSE)

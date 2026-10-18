@@ -1,22 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3b82f6"/>
-      <stop offset="1" stop-color="#1e3a8a"/>
-    </linearGradient>
-  </defs>
-  <rect x="48" y="48" width="928" height="928" rx="208" fill="url(#bg)"/>
+  <!-- 小尺寸（任务栏 24~40px）下也要清楚：纯色底、粗线条、元素少 -->
+  <rect x="32" y="32" width="960" height="960" rx="224" fill="#2563eb"/>
   <!-- git 分支：主干 + 一条分出去的分支 -->
-  <g stroke="#ffffff" stroke-width="60" stroke-linecap="round" fill="none">
-    <line x1="340" y1="250" x2="340" y2="770"/>
-    <path d="M640 330 C640 520 340 470 340 640"/>
+  <g stroke="#ffffff" stroke-width="112" stroke-linecap="round" fill="none">
+    <line x1="300" y1="250" x2="300" y2="770"/>
+    <path d="M690 300 C690 500 300 450 300 640"/>
   </g>
   <g fill="#ffffff">
-    <circle cx="340" cy="250" r="80"/>
-    <circle cx="340" cy="770" r="80"/>
-    <circle cx="640" cy="300" r="80"/>
+    <circle cx="300" cy="240" r="118"/>
+    <circle cx="300" cy="784" r="118"/>
+    <circle cx="690" cy="270" r="118"/>
   </g>
   <!-- 已备份的对勾 -->
-  <circle cx="712" cy="712" r="188" fill="#22c55e" stroke="#1e3a8a" stroke-width="36"/>
-  <path d="M618 716 L688 786 L812 652" stroke="#ffffff" stroke-width="60" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="730" cy="730" r="226" fill="#22c55e"/>
+  <path d="M620 736 L700 816 L842 668" stroke="#ffffff" stroke-width="84" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>

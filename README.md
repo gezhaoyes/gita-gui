@@ -95,3 +95,7 @@ cargo test -- --include-ignored  # 含真实 WSL 和 gita 的端到端测试（�
 ```
 
 设计说明见 [docs/计划书.md](docs/计划书.md)。
+
+## 许可证
+
+[MIT](LICENSE)

@@ -3,6 +3,7 @@ name = "gita-gui"
 version = "0.1.0"
 description = "Windows + WSL git 仓库总览与推送"
 authors = ["gezhao"]
+license = "MIT"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

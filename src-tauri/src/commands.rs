@@ -6,6 +6,7 @@ use std::sync::Mutex;
 
 use serde::Serialize;
 use tauri::{AppHandle, Manager};
+use tauri_plugin_autostart::ManagerExt;
 
 use crate::config::{self, AppConfig};
 use crate::discover;
@@ -72,6 +73,18 @@ pub fn save_config(state: tauri::State<'_, AppState>, config: AppConfig) -> Resu
         let failures = std::mem::take(&mut c.push_failures);
         *c = AppConfig { manifest_hashes: hashes, push_failures: failures, ..config };
     })
+}
+
+/// 开机自动启动：状态以系统里的登记为准（Windows 下是注册表 HKCU\...\Run），不存进 config.json
+#[tauri::command]
+pub fn get_autostart(app: AppHandle) -> Result<bool, String> {
+    app.autolaunch().is_enabled().map_err(|e| format!("读取开机启动状态失败：{e}"))
+}
+
+#[tauri::command]
+pub fn set_autostart(app: AppHandle, enabled: bool) -> Result<(), String> {
+    let al = app.autolaunch();
+    if enabled { al.enable() } else { al.disable() }.map_err(|e| format!("设置开机启动失败：{e}"))
 }
 
 // ---------- 总表 ----------

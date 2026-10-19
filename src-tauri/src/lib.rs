@@ -16,6 +16,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
+        .plugin(tauri_plugin_autostart::Builder::new().build())
         .setup(|app| {
             let config_path = app.path().app_config_dir()?.join("config.json");
             app.manage(commands::AppState {
@@ -28,6 +29,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::get_config,
             commands::save_config,
+            commands::get_autostart,
+            commands::set_autostart,
             commands::load_repos,
             commands::overwrite_manifest,
             commands::discover,

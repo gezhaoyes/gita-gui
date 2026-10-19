@@ -22,6 +22,7 @@ Repository registration uses the data of [gita](https://github.com/nosarthur/git
   - A new computer with an empty registry will not wipe the manifest
 - **Restore from manifest**: select repositories, clone them to their original paths (editable), and restore gita groups and multiple push URLs
 - **Context menu**: open in Explorer / VS Code (WSL repositories open via Remote-WSL), relocate, unregister
+- **Start at login**: optional, turned on in Settings (written to the current user's `Run` registry key)
 
 The tool does not fetch: "unpushed" is compared against the remote state recorded locally. Only the currently checked-out branch is checked.
 

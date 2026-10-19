@@ -11,6 +11,7 @@ import {
   NInputNumber,
   NModal,
   NSpace,
+  NSwitch,
   useMessage,
 } from "naive-ui";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
@@ -23,6 +24,9 @@ const message = useMessage();
 
 const form = ref<AppConfig | null>(null);
 const busy = ref(false);
+// 开机启动不在 config.json 里，打开对话框时向系统查询；null 表示查询失败，不显示开关
+const autostart = ref<boolean | null>(null);
+let autostartLoaded: boolean | null = null;
 
 watch(
   () => props.show,
@@ -30,6 +34,11 @@ watch(
     if (!v || !store.config) return;
     const { default_manifest_dir, ...cfg } = store.config;
     form.value = { ...cfg, skip_dirs: [...cfg.skip_dirs], manifest_dir: cfg.manifest_dir ?? default_manifest_dir };
+    autostart.value = autostartLoaded = null;
+    api.getAutostart().then(
+      (on) => (autostart.value = autostartLoaded = on),
+      () => {},
+    );
   },
 );
 
@@ -51,6 +60,9 @@ async function save() {
       gita_windows: f.gita_windows.trim() || "gita",
       discover_depth: f.discover_depth ?? 6,
     });
+    if (autostart.value !== null && autostart.value !== autostartLoaded) {
+      await api.setAutostart(autostart.value);
+    }
     message.success("设置已保存");
     emit("update:show", false);
     emit("saved");
@@ -82,6 +94,9 @@ async function save() {
         </NInputGroup>
       </NFormItem>
       <template v-if="!firstRun">
+        <NFormItem v-if="autostart !== null" label="开机自动启动" :show-feedback="true" feedback="登录 Windows 后自动打开本工具">
+          <NSwitch v-model:value="autostart" />
+        </NFormItem>
         <NFormItem label="WSL 发行版" :show-feedback="true" feedback="读取哪个 WSL 系统里的仓库，名字和 wsl -l 列出的一致">
           <NInput v-model:value="form.wsl_distro" />
         </NFormItem>
